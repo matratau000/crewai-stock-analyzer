@@ -9,7 +9,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import logging
 import numpy as np
-import concurrent.futures
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
