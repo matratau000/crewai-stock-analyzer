@@ -20,7 +20,7 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 # Prompt user to choose LLM
 llm_choice = input("Choose LLM (groq/openai): ").strip().lower()
 if llm_choice == "groq":
-    llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="mixtral-8x7b-32768")
+    llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="Llama3-70b-8192")
 elif llm_choice == "openai":
     llm = ChatOpenAI(model='gpt-4o', api_key=openai_api_key)  # Loading GPT-4o
 else:
