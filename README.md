@@ -135,7 +135,7 @@ This project is licensed under the MIT License.
 
 ### markdown_to_pdf.py
 
-This script converts markdown files to PDF format. It includes the following function:
+This script converts markdown files to PDF format. It includes the following functions:
 - `extract_sources(md_content)`: Extracts sources from markdown content.
 
 ### production.py
