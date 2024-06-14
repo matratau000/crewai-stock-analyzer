@@ -1,6 +1,5 @@
 # crewai-stock-analyzer
 
-
 # Financial Stock Analysis Tool
 
 This Python script provides a comprehensive financial analysis of a specified stock. It leverages various APIs and libraries to collect, analyze, and summarize stock sentiment and price data. The tool generates detailed financial reports, including sentiment analysis, price analysis, expert insights, and trade signals.
@@ -131,3 +130,27 @@ Contributions are welcome! Please submit a pull request or open an issue to disc
 ## License
 
 This project is licensed under the MIT License.
+
+## Additional Files
+
+### markdown_to_pdf.py
+
+This script converts markdown files to PDF format. It includes the following function:
+- `extract_sources(md_content)`: Extracts sources from markdown content.
+
+### production.py
+
+This script contains various functions for stock data analysis and summarization. It includes the following functions:
+- `collect_stock_data(stock, date)`: Collects stock data for a given stock and date.
+- `summarize_content(content)`: Summarizes the given content.
+- `scrape_and_summarize_link(link)`: Scrapes and summarizes content from a given link.
+- `analyze_stock_data(stock, data_summary)`: Analyzes stock data based on the data summary.
+- `review_analysis(stock, analysis_output)`: Reviews the analysis output for a given stock.
+- `improve_analysis(stock, review_output, analysis_output)`: Improves the analysis based on the review output.
+- `expert_analysis(stock, price_analysis, sentiment_analysis)`: Provides expert analysis based on price and sentiment analysis.
+- `generate_trade_signal(stock, improved_output, price_analysis)`: Generates trade signals based on the improved output and price analysis.
+- `get_weekly_stock_data(ticker, start_date, end_date)`: Retrieves weekly stock data for a given ticker and date range.
+- `perform_numerical_analysis(data, stock)`: Performs numerical analysis on the given data and stock.
+- `calculate_macd(data)`: Calculates the MACD (Moving Average Convergence Divergence) for the given data.
+- `calculate_bollinger_bands(data, window=20)`: Calculates the Bollinger Bands for the given data and window.
+- `analyze_price_data(data, stock)`: Analyzes the price data for a given stock.
