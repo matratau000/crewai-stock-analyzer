@@ -26,7 +26,7 @@ This Python script provides a comprehensive financial analysis of a specified st
   - `dotenv`
   - `logging`
   - `numpy`
-  - `concurrent.futures`
+
 
 ## Installation
 
