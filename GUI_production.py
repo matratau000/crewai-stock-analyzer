@@ -70,7 +70,7 @@ if llm_choice == "groq":
 elif llm_choice == "openai":
     llm = ChatOpenAI(model='gpt-3.5-turbo', api_key=openai_api_key)
 elif llm_choice == "ollama":
-    model_name = st.selectbox("Choose Ollama Model", ["llama3", "codestral", "phi3", "mixtral:8x22b", "llama3:70b"])
+    model_name = st.selectbox("Choose Ollama Model", ["llama3", "codestral", "phi3", "mixtral:8x22b", "llama3:70b", "gemma2:9b"])
     llm = Ollama(model=model_name)
 else:
     st.error("Invalid LLM choice. Please choose 'groq', 'openai', or 'ollama'.")

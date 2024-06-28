@@ -133,6 +133,15 @@ This project is licensed under the MIT License.
 
 ## Additional Files
 
+### GUI_production.py
+
+This script provides a graphical user interface (GUI) for the stock analysis tool using Streamlit. It includes the following features:
+- User-friendly interface for inputting stock information and analysis parameters.
+- Integration with various language models (LLMs) including Groq, OpenAI, and Ollama.
+- Real-time display of analysis progress and results.
+- Generation of comprehensive financial reports in text, markdown, and PDF formats.
+- Interactive charts for visualizing stock price trends.
+
 ### markdown_to_pdf.py
 
 This script converts markdown files to PDF format. It includes the following functions:
