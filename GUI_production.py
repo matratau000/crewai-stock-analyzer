@@ -130,14 +130,15 @@ if st.button("Analyze Stock"):
         if current_result:
             search_results.append(current_result)
         
-        # Check if all required keys are present in each result
-        for result in search_results:
-            if 'Title' not in result or 'Link' not in result or 'Snippet' not in result:
-                logging.error(f"Missing key in result: {result}")
-                st.error(f"Missing key in result: {result}")
+        # Filter out results that are missing any required keys
+        valid_results = [result for result in search_results if 'Title' in result and 'Link' in result and 'Snippet' in result]
+        
+        if len(valid_results) < len(search_results):
+            logging.warning(f"Some results were skipped due to missing keys. Processed {len(valid_results)} out of {len(search_results)} results.")
+            st.warning(f"Some results were skipped due to missing keys. Processed {len(valid_results)} out of {len(search_results)} results.")
         
         formatted_results = "\n".join(
-            [f"Title: {result['Title']}\nLink: {result['Link']}\nSnippet: {result['Snippet']}" for result in search_results]
+            [f"Title: {result['Title']}\nLink: {result['Link']}\nSnippet: {result['Snippet']}" for result in valid_results]
         )
         return formatted_results
 
