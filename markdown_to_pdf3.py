@@ -1,5 +1,6 @@
 import pdfkit
 import sys
+import markdown
 
 def markdown_to_pdf(md_file):
     # Convert Markdown to HTML
