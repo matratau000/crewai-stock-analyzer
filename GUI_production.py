@@ -105,6 +105,7 @@ if st.button("Analyze Stock"):
             result = serper_tool.run(query=query)
             st.text("Data Collector Output:")  # Debugging: Print the raw result
             st.text(result)
+            logging.info(f"Raw result: {result}")
         except Exception as e:
             st.error(f"Error collecting stock data: {str(e)}")
             return []
@@ -115,6 +116,7 @@ if st.button("Analyze Stock"):
         current_result = {}
         
         for line in lines:
+            logging.info(f"Processing line: {line}")
             if line.startswith("Title: "):
                 if current_result:
                     search_results.append(current_result)
@@ -127,6 +129,12 @@ if st.button("Analyze Stock"):
         
         if current_result:
             search_results.append(current_result)
+        
+        # Check if all required keys are present in each result
+        for result in search_results:
+            if 'Title' not in result or 'Link' not in result or 'Snippet' not in result:
+                logging.error(f"Missing key in result: {result}")
+                st.error(f"Missing key in result: {result}")
         
         formatted_results = "\n".join(
             [f"Title: {result['Title']}\nLink: {result['Link']}\nSnippet: {result['Snippet']}" for result in search_results]
