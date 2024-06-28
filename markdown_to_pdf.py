@@ -66,9 +66,18 @@ def markdown_to_pdf(md_file):
     with open(md_file, 'r') as file:
         md_content = file.read()
     
+    # Remove "tm" ASCII characters
+    md_content = md_content.replace("â„¢", "")
+
     html_content = markdown.markdown(md_content, extensions=['extra', 'smarty'])
     
     # Ensure links are properly formatted with titles included
+    for a in soup.find_all('a'):
+        if not a.get('title'):
+            a['title'] = a.get('href')
+        # Add title to the link text if not present
+        if a.string and a['title'] not in a.string:
+            a.string = f"{a.string} ({a['title']})"
     from bs4 import BeautifulSoup
 
     soup = BeautifulSoup(html_content, 'html.parser')
