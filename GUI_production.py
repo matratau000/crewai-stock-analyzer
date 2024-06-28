@@ -84,53 +84,52 @@ stock_to_analyze = st.text_input("Enter the stock to analyze:")
 stock_ticker = st.text_input("Enter the stock ticker symbol:")
 current_date = st.text_input("Enter the current date (YYYY-MM-DD):", value=str(datetime.today().date()))
 
-if st.button("Analyze Stock"):
-    # Define the tasks and use SerperDevTool for data collection
-    def collect_stock_data(stock, date):
-        """
-        Collect stock sentiment data using SerperDevTool.
+# Define the tasks and use SerperDevTool for data collection
+def collect_stock_data(stock, date):
+    """
+    Collect stock sentiment data using SerperDevTool.
 
-        Args:
-        stock (str): The stock name or ticker symbol.
-        date (str): The date from which to collect data, in YYYY-MM-DD format.
+    Args:
+    stock (str): The stock name or ticker symbol.
+    date (str): The date from which to collect data, in YYYY-MM-DD format.
 
-        Returns:
-        list: A list of dictionaries containing search results with titles, links, and snippets.
+    Returns:
+    list: A list of dictionaries containing search results with titles, links, and snippets.
 
-        Raises:
-        Exception: If there's an error in data collection.
-        """
-        try:
-            query = f"latest stock sentiment data for {stock} after {date}"
-            result = serper_tool.run(query=query)
-            st.text("Data Collector Output:")  # Debugging: Print the raw result
-            st.text(result)
-        except Exception as e:
-            st.error(f"Error collecting stock data: {str(e)}")
-            return []
-        
-        # Parsing the result manually
-        lines = result.split('\n')
-        search_results = []
-        current_result = {}
-        
-        for line in lines:
-            if line.startswith("Title: "):
-                if current_result:
-                    search_results.append(current_result)
-                    current_result = {}
-                current_result['Title'] = line.replace("Title: ", "")
-            elif line.startswith("Link: "):
-                current_result['Link'] = line.replace("Link: ", "")
-            elif line.startswith("Snippet: "):
-                current_result['Snippet'] = line.replace("Snippet: ", "")
-        
-        if current_result:
-            search_results.append(current_result)
-        
-        return search_results
+    Raises:
+    Exception: If there's an error in data collection.
+    """
+    try:
+        query = f"latest stock sentiment data for {stock} after {date}"
+        result = serper_tool.run(query=query)
+        st.text("Data Collector Output:")  # Debugging: Print the raw result
+        st.text(result)
+    except Exception as e:
+        st.error(f"Error collecting stock data: {str(e)}")
+        return []
+    
+    # Parsing the result manually
+    lines = result.split('\n')
+    search_results = []
+    current_result = {}
+    
+    for line in lines:
+        if line.startswith("Title: "):
+            if current_result:
+                search_results.append(current_result)
+                current_result = {}
+            current_result['Title'] = line.replace("Title: ", "")
+        elif line.startswith("Link: "):
+            current_result['Link'] = line.replace("Link: ", "")
+        elif line.startswith("Snippet: "):
+            current_result['Snippet'] = line.replace("Snippet: ", "")
+    
+    if current_result:
+        search_results.append(current_result)
+    
+    return search_results
 
-    def generate_document(url):
+def generate_document(url):
         "Given an URL, return a langchain Document for further processing"
         loader = WebBaseLoader([url])
         elements = loader.load()
@@ -165,27 +164,27 @@ if st.button("Analyze Stock"):
     final_summary = combined_summary  # No need to summarize again, already summarized
 
     # Create task functions directly instead of delegating between agents unnecessarily
-    def analyze_stock_data(stock, data_summary):
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are a financial data analyst."),
-            ("human", f"Analyze the collected stock sentiment data for {stock}: {data_summary} and predict next week's sentiment.")
-        ])
-        analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}"})
-        st.text("Analyze Data Task Output:")
-        st.text(analysis_output)
-        return analysis_output
+def analyze_stock_data(stock, data_summary):
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a financial data analyst."),
+        ("human", f"Analyze the collected stock sentiment data for {stock}: {data_summary} and predict next week's sentiment.")
+    ])
+    analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}"})
+    st.text("Analyze Data Task Output:")
+    st.text(analysis_output)
+    return analysis_output
 
-    def review_analysis(stock, analysis_output):
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are a financial data reviewer."),
-            ("human", f"Review the analysis of {stock}: {analysis_output} and provide feedback for improvement.")
-        ])
-        review_output = (prompt | llm).invoke({"text": f"Review the analysis of {stock}"})
-        st.text("Review Analysis Task Output:")
-        st.text(review_output)
-        return review_output
+def review_analysis(stock, analysis_output):
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a financial data reviewer."),
+        ("human", f"Review the analysis of {stock}: {analysis_output} and provide feedback for improvement.")
+    ])
+    review_output = (prompt | llm).invoke({"text": f"Review the analysis of {stock}"})
+    st.text("Review Analysis Task Output:")
+    st.text(review_output)
+    return review_output
 
-    def improve_analysis(stock, review_output, analysis_output):
+def improve_analysis(stock, review_output, analysis_output):
         prompt = ChatPromptTemplate.from_messages([
             ("system", "You are a financial analyst."),
             ("human", f"Based on the review feedback: {review_output}, improve the analysis of {stock}: {analysis_output}.")
