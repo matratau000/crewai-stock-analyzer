@@ -398,7 +398,7 @@ if st.button("Analyze Stock"):
         st.success(f"Analysis complete. Results saved to {output_txt_filename} and {output_md_filename}")
 
         # Generate PDF using the provided markdown_to_pdf3.py script
-        os.system(f"python3 /Users/taulantmatraku/crewai-stock-analyzer/markdown_to_pdf3.py {output_md_filename}")
+        os.system(f"python3 markdown_to_pdf.py {output_md_filename}")
 
         # Find the generated PDF dynamically
         output_pdf = next((file for file in os.listdir('.') if file.endswith('.pdf')), None)

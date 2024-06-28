@@ -6,3 +6,4 @@
 *.pdf
 *.md
 /old-code
+/__pycache__
