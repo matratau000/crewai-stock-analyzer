@@ -87,6 +87,19 @@ current_date = st.text_input("Enter the current date (YYYY-MM-DD):", value=str(d
 if st.button("Analyze Stock"):
     # Define the tasks and use SerperDevTool for data collection
     def collect_stock_data(stock, date):
+        """
+        Collect stock sentiment data using SerperDevTool.
+
+        Args:
+        stock (str): The stock name or ticker symbol.
+        date (str): The date from which to collect data, in YYYY-MM-DD format.
+
+        Returns:
+        list: A list of dictionaries containing search results with titles, links, and snippets.
+
+        Raises:
+        Exception: If there's an error in data collection.
+        """
         try:
             query = f"latest stock sentiment data for {stock} after {date}"
             result = serper_tool.run(query=query)
