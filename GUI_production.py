@@ -161,8 +161,7 @@ if st.button("Analyze Stock"):
         except Exception as e:
             logging.error(f"Error summarizing {link}: {e}")
 
-    combined_summary = " ".join(summaries)
-    final_summary = combined_summary  # No need to summarize again, already summarized
+    final_summary = " ".join(summaries)
 
     # Create task functions directly instead of delegating between agents unnecessarily
     def analyze_stock_data(stock, data_summary):
@@ -170,7 +169,7 @@ if st.button("Analyze Stock"):
             ("system", "You are a financial data analyst."),
             ("human", f"Analyze the collected stock sentiment data for {stock}: {data_summary} and predict next week's sentiment.")
         ])
-        analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}"})
+        analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}: {data_summary}"})
         st.text("Analyze Data Task Output:")
         st.text(analysis_output)
         return analysis_output
