@@ -70,6 +70,9 @@ def markdown_to_pdf(md_file):
     md_content = md_content.replace("â„¢", "")
 
     html_content = markdown.markdown(md_content, extensions=['extra', 'smarty'])
+
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_content, 'html.parser')
     
     # Ensure links are properly formatted with titles included
     for a in soup.find_all('a'):
@@ -78,12 +81,7 @@ def markdown_to_pdf(md_file):
         # Add title to the link text if not present
         if a.string and a['title'] not in a.string:
             a.string = f"{a.string} ({a['title']})"
-    from bs4 import BeautifulSoup
-
-    soup = BeautifulSoup(html_content, 'html.parser')
-    for a in soup.find_all('a'):
-        if not a.get('title'):
-            a['title'] = a.get('href')
+    
     html_content = str(soup)
 
     # Combine CSS styles with HTML content
