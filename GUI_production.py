@@ -128,7 +128,10 @@ if st.button("Analyze Stock"):
         if current_result:
             search_results.append(current_result)
         
-        return search_results
+        formatted_results = "\n".join(
+            [f"Title: {result['Title']}\nLink: {result['Link']}\nSnippet: {result['Snippet']}" for result in search_results]
+        )
+        return formatted_results
 
     def generate_document(url):
         "Given an URL, return a langchain Document for further processing"
@@ -149,7 +152,8 @@ if st.button("Analyze Stock"):
 
     # Collect the stock data
     data_summary = collect_stock_data(stock_to_analyze, current_date)
-    links = [result['Link'] for result in data_summary]
+    search_results = data_summary.split('\n---\n')
+    links = [result.split('\n')[1].replace("Link: ", "") for result in search_results if "Link: " in result]
 
     summaries = []
     for link in links:
@@ -311,7 +315,7 @@ if st.button("Analyze Stock"):
     summarized_content = final_summary
 
     # Analyze the collected stock data
-    analysis_output = analyze_stock_data(stock_to_analyze, summarized_content)
+    analysis_output = analyze_stock_data(stock_to_analyze, data_summary)
 
     # Review the analysis
     review_output = review_analysis(stock_to_analyze, analysis_output)
