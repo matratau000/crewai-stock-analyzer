@@ -15,6 +15,7 @@ import markdown
 import pdfkit
 import base64
 import re
+from functools import lru_cache
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.docstore.document import Document
 from unstructured.cleaners.core import remove_punctuation, clean, clean_extra_whitespace
@@ -86,10 +87,14 @@ current_date = st.text_input("Enter the current date (YYYY-MM-DD):", value=str(d
 if st.button("Analyze Stock"):
     # Define the tasks and use SerperDevTool for data collection
     def collect_stock_data(stock, date):
-        query = f"latest stock sentiment data for {stock} after {date}"
-        result = serper_tool.run(query=query)
-        st.text("Data Collector Output:")  # Debugging: Print the raw result
-        st.text(result)
+        try:
+            query = f"latest stock sentiment data for {stock} after {date}"
+            result = serper_tool.run(query=query)
+            st.text("Data Collector Output:")  # Debugging: Print the raw result
+            st.text(result)
+        except Exception as e:
+            st.error(f"Error collecting stock data: {str(e)}")
+            return []
         
         # Parsing the result manually
         lines = result.split('\n')
@@ -197,6 +202,7 @@ if st.button("Analyze Stock"):
         st.text(signal_output)
         return signal_output
 
+    @lru_cache(maxsize=32)
     def get_weekly_stock_data(ticker, start_date, end_date):
         try:
             data = yf.download(ticker, start=start_date, end=end_date, interval='1wk')
