@@ -15,6 +15,7 @@ import markdown
 import pdfkit
 import base64
 import re
+from functools import lru_cache
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.docstore.document import Document
 from unstructured.cleaners.core import remove_punctuation, clean, clean_extra_whitespace
@@ -86,10 +87,28 @@ current_date = st.text_input("Enter the current date (YYYY-MM-DD):", value=str(d
 if st.button("Analyze Stock"):
     # Define the tasks and use SerperDevTool for data collection
     def collect_stock_data(stock, date):
-        query = f"latest stock sentiment data for {stock} after {date}"
-        result = serper_tool.run(query=query)
-        st.text("Data Collector Output:")  # Debugging: Print the raw result
-        st.text(result)
+        """
+        Collect stock sentiment data using SerperDevTool.
+
+        Args:
+        stock (str): The stock name or ticker symbol.
+        date (str): The date from which to collect data, in YYYY-MM-DD format.
+
+        Returns:
+        list: A list of dictionaries containing search results with titles, links, and snippets.
+
+        Raises:
+        Exception: If there's an error in data collection.
+        """
+        try:
+            query = f"latest stock sentiment data for {stock} after {date}"
+            result = serper_tool.run(query=query)
+            st.text("Data Collector Output:")  # Debugging: Print the raw result
+            st.text(result)
+            logging.info(f"Raw result: {result}")
+        except Exception as e:
+            st.error(f"Error collecting stock data: {str(e)}")
+            return []
         
         # Parsing the result manually
         lines = result.split('\n')
@@ -97,6 +116,7 @@ if st.button("Analyze Stock"):
         current_result = {}
         
         for line in lines:
+            logging.info(f"Processing line: {line}")
             if line.startswith("Title: "):
                 if current_result:
                     search_results.append(current_result)
@@ -110,7 +130,17 @@ if st.button("Analyze Stock"):
         if current_result:
             search_results.append(current_result)
         
-        return search_results
+        # Filter out results that are missing any required keys
+        valid_results = [result for result in search_results if 'Title' in result and 'Link' in result and 'Snippet' in result]
+        
+        if len(valid_results) < len(search_results):
+            logging.warning(f"Some results were skipped due to missing keys. Processed {len(valid_results)} out of {len(search_results)} results.")
+            st.warning(f"Some results were skipped due to missing keys. Processed {len(valid_results)} out of {len(search_results)} results.")
+        
+        formatted_results = "\n".join(
+            [f"Title: {result['Title']}\nLink: {result['Link']}\nSnippet: {result['Snippet']}" for result in valid_results]
+        )
+        return formatted_results
 
     def generate_document(url):
         "Given an URL, return a langchain Document for further processing"
@@ -131,7 +161,8 @@ if st.button("Analyze Stock"):
 
     # Collect the stock data
     data_summary = collect_stock_data(stock_to_analyze, current_date)
-    links = [result['Link'] for result in data_summary]
+    search_results = data_summary.split('\n---\n')
+    links = [result.split('\n')[1].replace("Link: ", "") for result in search_results if "Link: " in result]
 
     summaries = []
     for link in links:
@@ -143,8 +174,7 @@ if st.button("Analyze Stock"):
         except Exception as e:
             logging.error(f"Error summarizing {link}: {e}")
 
-    combined_summary = " ".join(summaries)
-    final_summary = combined_summary  # No need to summarize again, already summarized
+    final_summary = " ".join(summaries)
 
     # Create task functions directly instead of delegating between agents unnecessarily
     def analyze_stock_data(stock, data_summary):
@@ -152,7 +182,7 @@ if st.button("Analyze Stock"):
             ("system", "You are a financial data analyst."),
             ("human", f"Analyze the collected stock sentiment data for {stock}: {data_summary} and predict next week's sentiment.")
         ])
-        analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}"})
+        analysis_output = (prompt | llm).invoke({"text": f"Analyze the stock sentiment data for {stock}: {data_summary}"})
         st.text("Analyze Data Task Output:")
         st.text(analysis_output)
         return analysis_output
@@ -197,6 +227,7 @@ if st.button("Analyze Stock"):
         st.text(signal_output)
         return signal_output
 
+    @lru_cache(maxsize=32)
     def get_weekly_stock_data(ticker, start_date, end_date):
         try:
             data = yf.download(ticker, start=start_date, end=end_date, interval='1wk')
@@ -293,7 +324,7 @@ if st.button("Analyze Stock"):
     summarized_content = final_summary
 
     # Analyze the collected stock data
-    analysis_output = analyze_stock_data(stock_to_analyze, summarized_content)
+    analysis_output = analyze_stock_data(stock_to_analyze, data_summary)
 
     # Review the analysis
     review_output = review_analysis(stock_to_analyze, analysis_output)
@@ -367,7 +398,7 @@ if st.button("Analyze Stock"):
         st.success(f"Analysis complete. Results saved to {output_txt_filename} and {output_md_filename}")
 
         # Generate PDF using the provided markdown_to_pdf3.py script
-        os.system(f"python3 /Users/taulantmatraku/crewai-stock-analyzer/markdown_to_pdf3.py {output_md_filename}")
+        os.system(f"python3 markdown_to_pdf.py {output_md_filename}")
 
         # Find the generated PDF dynamically
         output_pdf = next((file for file in os.listdir('.') if file.endswith('.pdf')), None)
