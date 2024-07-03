@@ -3,6 +3,10 @@ from datetime import datetime
 import yfinance as yf
 import matplotlib.pyplot as plt
 from crewai_tools import SerperDevTool, ScrapeWebsiteTool
+from langchain_community.document_loaders import WebBaseLoader
+from langchain.docstore.document import Document
+from unstructured.cleaners.core import remove_punctuation, clean, clean_extra_whitespace
+from langchain.chains.summarize import load_summarize_chain
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate

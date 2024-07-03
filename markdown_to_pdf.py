@@ -9,6 +9,8 @@ import os
 import shutil
 import glob
 import sys
+import logging
+import base64
 
 def extract_sources(md_content):
     sources = []

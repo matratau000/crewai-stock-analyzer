@@ -15,17 +15,26 @@ This Python script provides a comprehensive financial analysis of a specified st
 
 - Python 3.7+
 - Libraries:
-  - `os`
-  - `datetime`
   - `yfinance`
   - `matplotlib`
-  - `crewai_tools`
-  - `langchain_groq`
-  - `langchain_openai`
-  - `langchain_core`
-  - `dotenv`
-  - `logging`
+  - `crewai-tools`
+  - `langchain-groq`
+  - `langchain-openai`
+  - `langchain-core`
+  - `python-dotenv`
   - `numpy`
+  - `markdown`
+  - `pdfkit`
+  - `streamlit`
+  - `reportlab`
+  - `logging`
+  - `base64`
+  - `functools`
+  - `langchain_community.llms`
+  - `langchain_community.document_loaders`
+  - `langchain.docstore.document`
+  - `unstructured.cleaners.core`
+  - `langchain.chains.summarize`
 
 
 ## Installation
@@ -54,7 +63,7 @@ This Python script provides a comprehensive financial analysis of a specified st
 
 1. Run the script:
    ```bash
-   python financial_stock_analysis.py
+   python production.py
    ```
 
 2. Follow the prompts to choose a language model and enter the stock details:

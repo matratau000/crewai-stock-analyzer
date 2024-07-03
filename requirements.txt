@@ -10,3 +10,12 @@ markdown==3.4.1
 pdfkit==1.0.0
 PyPDF2==3.0.1
 streamlit==1.35.0
+reportlab==3.6.12
+logging==0.5.1.2
+base64==1.0.0
+functools==0.5
+langchain_community.llms==0.1.0
+langchain_community.document_loaders==0.1.0
+langchain.docstore.document==0.1.0
+unstructured.cleaners.core==0.1.0
+langchain.chains.summarize==0.1.0
